@@ -75,6 +75,22 @@ Timer0IntHandler(void)
 {
     uint32_t pui32DataTx[NUM_SPI_DATA]; // la función put pide tipo uint32_t
     uint8_t ui32Index;
+    pui32DataTx[0] = (uint32_t)(dato);
+    for(ui32Index = 0; ui32Index < NUM_SPI_DATA ; ui32Index++)
+    {
+        SSIDataPut(SSI0_BASE, pui32DataTx[ui32Index]);
+    }
+    while(SSIBusy(SSI0_BASE))
+    {
+    }
+
+    /*
+     * Codigo para Lectura ADC (cortesia de Catedraticos Control1)
+     *
+     * Descomentar esta seccion si se ocupa el ADC
+     */
+
+    /*
     uint32_t pui32ADC0Value[2];                         // Arreglo para 2 valores.
     TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
     ADCProcessorTrigger(ADC0_BASE, 2);                  // Notar el cambio de "secuencia" (2 en lugar de 3).
@@ -85,16 +101,16 @@ Timer0IntHandler(void)
     ADCSequenceDataGet(ADC0_BASE, 2, pui32ADC0Value);   // Notar el cambio de "secuencia".
     v0 = pui32ADC0Value[0]*3.3/4095.0;  // Convertir a voltios    ADC0  = referencia
     v1 = pui32ADC0Value[1]*3.3/4095.0; // Convertir a voltios    ADC1  = salida (y)
-    pui32DataTx[0] = (uint32_t)(dato);
-    for(ui32Index = 0; ui32Index < NUM_SPI_DATA ; ui32Index++)
-    {
-        SSIDataPut(SSI0_BASE, pui32DataTx[ui32Index]);
-    }
-    while(SSIBusy(SSI0_BASE))
-    {
-    }
+    */
 
-// PID
+/*
+ * Definicion de Codigo para PID Simple.
+ *
+ * REEMPLAZAR V0 Y V1 POR DATOS DE ANGULO DE IMU
+ */
+
+    v0 = 0*3.3/4095.0;  // Conversion de Datos
+    v1 = 0*3.3/4095.0; // Convertir de Datos
 
     // Desarrollo de PID REstador
        ek = v0 - v1;
@@ -105,18 +121,17 @@ Timer0IntHandler(void)
        ek_1 = ek;
        Ek_1 = Ek;
 // Limites de Uk para que salida este entre el rango
-       if (uk > 6){
-           uk = 6;
+       if (uk > 12){
+           uk = 12;
        }
-       if (uk < -6){
-           uk = -6;
+       if (uk < -12){
+           uk = -12;
        }
 // Mapeo para salida por SPI para el DAC
        uk2 = uk*4095.0/3.3;
        uk_int = (int)uk2;
        dato = 0b0111000000000000;
        dato = dato + uk_int;
-
 }
 
 
@@ -127,6 +142,7 @@ main(void)
     uint16_t freq_muestreo = 1000;    // En Hz
 
     SysCtlClockSet(SYSCTL_SYSDIV_2_5 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_16MHZ); // 80 MHz
+
     // Configuración de SPI
     SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
@@ -138,6 +154,22 @@ main(void)
     SSIConfigSetExpClk(SSI0_BASE, SysCtlClockGet(), SSI_FRF_MOTO_MODE_0, SSI_MODE_MASTER, SPI_FREC, SPI_ANCHO);
     SSIEnable(SSI0_BASE);
 
+    //Configurando Timer 0
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
+    IntMasterEnable();
+    TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
+    TimerLoadSet(TIMER0_BASE, TIMER_A, (uint32_t)(SysCtlClockGet()/freq_muestreo));
+    IntEnable(INT_TIMER0A);
+    TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
+    TimerEnable(TIMER0_BASE, TIMER_A);
+
+
+    /*
+     * Codigo de Activacion de ADC
+     * Descomentar si se requiere el uso de ADC
+     */
+
+    /*
     // Configuración del ADC
     SysCtlPeripheralEnable(SYSCTL_PERIPH_ADC0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);                        //Activando puerto de los AIN0 y ANI1
@@ -148,15 +180,7 @@ main(void)
     ADCSequenceStepConfigure(ADC0_BASE, 2, 1, ADC_CTL_CH1 | ADC_CTL_IE | ADC_CTL_END);  // Step 1 en la secuencia 2: Canal 1 (ADC_CTL_CH1) en modo single-ended (por defecto),
     ADCSequenceEnable(ADC0_BASE, 2);                                    // Activando secuencia 2 de ADC0
     ADCIntClear(ADC0_BASE, 2);                                          // Limpiamos la bandera de interrupción del ADC0.
-
-    //Configurando Timer 0
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_TIMER0);
-    IntMasterEnable();
-    TimerConfigure(TIMER0_BASE, TIMER_CFG_PERIODIC);
-    TimerLoadSet(TIMER0_BASE, TIMER_A, (uint32_t)(SysCtlClockGet()/freq_muestreo));
-    IntEnable(INT_TIMER0A);
-    TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
-    TimerEnable(TIMER0_BASE, TIMER_A);
+    */
 
     while(1)
     {
