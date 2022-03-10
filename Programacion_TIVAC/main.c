@@ -17,8 +17,14 @@
  * Incluimos las librerias necesarias para el proyecto.
  *
  */
+
+
+#include <stdarg.h>
 #include <stdint.h>
 #include <stdbool.h>
+#include "inc/hw_i2c.h"
+#include "inc/hw_gpio.h"
+#include "driverlib/i2c.h"
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
@@ -43,6 +49,14 @@
 #define SPI_FREC  4000000                 // Frecuencia para el reloj del SPI
 #define SPI_ANCHO      16                 // Número de bits que se envían cada vez, entre 4 y 16
 uint16_t dato = 0b0111000000000000;       // Para lo que se envía por SPI.
+
+/*
+ * Declaracion de Variables I2C
+ */
+
+#define SLAVE_ADDR 0x68     /* 0110 1000 */
+// parametros MPU6050
+float axf, ayf, azf, gxf, gyf, gzf, sum;
 
 /*
  *
@@ -108,11 +122,9 @@ Timer0IntHandler(void)
  *
  * REEMPLAZAR V0 Y V1 POR DATOS DE ANGULO DE IMU
  */
-
-    v0 = 0*3.3/4095.0;  // Conversion de Datos
-    v1 = 0*3.3/4095.0; // Convertir de Datos
-
-    // Desarrollo de PID REstador
+       v0 = 0*3.3/4095.0;  // Conversion de Datos
+       v1 = 0*3.3/4095.0; // Convertir de Datos
+// Desarrollo de PID REstador
        ek = v0 - v1;
        ed = ek - ek_1;
        Ek = Ek_1 + ek;
@@ -162,6 +174,39 @@ main(void)
     IntEnable(INT_TIMER0A);
     TimerIntEnable(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
     TimerEnable(TIMER0_BASE, TIMER_A);
+
+    /*
+     *
+     * Configuracion Parametros I2C
+     *
+     */
+
+    //enable I2C module 0
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_I2C0);
+
+    //reset module
+    SysCtlPeripheralReset(SYSCTL_PERIPH_I2C0);
+
+    //enable GPIO peripheral that contains I2C 0
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOB);
+
+    // Configure the pin muxing for I2C0 functions on port B2 and B3.
+    GPIOPinConfigure(GPIO_PB2_I2C0SCL);
+    GPIOPinConfigure(GPIO_PB3_I2C0SDA);
+
+    // Select the I2C function for these pins.
+    GPIOPinTypeI2CSCL(GPIO_PORTB_BASE, GPIO_PIN_2);
+    GPIOPinTypeI2C(GPIO_PORTB_BASE, GPIO_PIN_3);
+
+    // Enable and initialize the I2C0 master module.  Use the system clock for
+    // the I2C0 module.  The last parameter sets the I2C data transfer rate.
+    // If false the data rate is set to 100kbps and if true the data rate will
+    // be set to 400kbps.
+    I2CMasterInitExpClk(I2C0_BASE, SysCtlClockGet(), false);
+
+    //clear I2C FIFOs
+    HWREG(I2C0_BASE + I2C_O_FIFOCTL) = 80008000;
+
 
 
     /*
