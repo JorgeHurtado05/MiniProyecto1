@@ -14,11 +14,9 @@
  * Definimos variables necesarias para lectura IMU
  */
 float faccel[3],fgyro[3];
-tMPU6050 sMPU6050;
 /*
  * Instancias para I2C y MPU
  */
-volatile bool g_bIMUMPU6050Done;
-tI2CMInstance g_sI2CMSimpleInst;
+volatile bool DoneFlagMPU6050;
 
 #endif /* IMUMPU6050_H_ */

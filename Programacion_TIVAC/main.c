@@ -28,7 +28,7 @@
 #include "driverlib/gpio.h"
 #include "driverlib/uart.h"
 #include "driverlib/pin_map.h"
-
+#include "IMUMPU6050.h"
 /*
  * Prototipos de Funciones
  */
