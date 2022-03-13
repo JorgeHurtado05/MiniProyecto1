@@ -4,6 +4,7 @@
  *  Created on: Mar 12, 2022
  *      Author: Jorge Hurtado
  *      Description: IMU MPU6050 library (Reads via I2C)
+ *      Basado en Librerias extraidas de: https://github.com/mathmagson/mpu6050_tm4c123g
  *
  */
 
@@ -45,7 +46,7 @@
 void I2C0_INIT(void);
 void I2CMSimpleIntHandler(void);
 void MPU6050Callback(void *pvCallbackData, uint_fast8_t ui8Status);
-void MPU6050init(void);
+void MPU6050INIT(void);
 void MPU6050READ (float *x, float *y, float *z);
 
 /*

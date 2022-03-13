@@ -39,9 +39,9 @@ void uart_init(void);
  */
 
 // Sensor Variables
-uint8_t P1_LED=0;
-uint8_t P2_LED=0;
-uint8_t P3_LED=0;
+float* Angulo_x=0;
+float* Angulo_y=0;
+float* Angulo_z=0;
 uint8_t P4_LED=0;
 
 /*
@@ -61,6 +61,8 @@ int main(void){
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOE);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
     //Inicializamos UART
+    I2C0_INIT();
+    MPU6050INIT();
     uart_init();
     //Assign GPIO Inputs for Sensors
     GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4);
@@ -70,17 +72,12 @@ int main(void){
     //Loop Para lectura e impresion de datos.
     while(1)
     {
-        P1_LED = GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2);
-        P2_LED = GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_3);
-        P3_LED = GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_4);
+        MPU6050READ(Angulo_x,Angulo_y,Angulo_z);
         P4_LED = GPIOPinRead(GPIO_PORTB_BASE, GPIO_PIN_6);
         //Enviamos estado de los PushButtons por UART a la TIVAC
-        UARTCharPut(UART2_BASE, P1_LED);
-        UARTCharPut(UART2_BASE, P2_LED);
-        UARTCharPut(UART2_BASE, P3_LED);
         UARTCharPut(UART2_BASE, P4_LED);
 
-        if(P1_LED==0)
+        if(P4_LED==0)
         {
         GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_7, 0);
         }
