@@ -28,7 +28,25 @@
 #include "driverlib/gpio.h"
 #include "driverlib/uart.h"
 #include "driverlib/pin_map.h"
+
+/*
+ * Prototipos de Funciones
+ */
 void uart_init(void);
+
+/*
+ * Variables del sistema
+ */
+
+// Sensor Variables
+uint8_t P1_LED=0;
+uint8_t P2_LED=0;
+uint8_t P3_LED=0;
+uint8_t P4_LED=0;
+
+/*
+ * Funcion Main
+ */
 
 
 int main(void){
@@ -47,20 +65,11 @@ int main(void){
     //Assign GPIO Inputs for Sensors
     GPIOPinTypeGPIOInput(GPIO_PORTA_BASE, GPIO_PIN_2|GPIO_PIN_3|GPIO_PIN_4);
     GPIOPinTypeGPIOInput(GPIO_PORTB_BASE, GPIO_PIN_6);
-    // Sensor Variables
-    uint8_t P1_LED=0;
-    uint8_t P2_LED=0;
-    uint8_t P3_LED=0;
-    uint8_t P4_LED=0;
+
 
     //Loop Para lectura e impresion de datos.
     while(1)
     {
-        // Lectura de los PushButtons.
-
-        // If variable Names are not familiar please refer to the associated pdf file with pinout and Electric Scheme.
-        // Same applies for port management in GPIO read and write.
-
         P1_LED = GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_2);
         P2_LED = GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_3);
         P3_LED = GPIOPinRead(GPIO_PORTA_BASE, GPIO_PIN_4);
@@ -70,9 +79,7 @@ int main(void){
         UARTCharPut(UART2_BASE, P2_LED);
         UARTCharPut(UART2_BASE, P3_LED);
         UARTCharPut(UART2_BASE, P4_LED);
-        //Iniciamos la revision de que parqueos estan ocupados.
 
-        //if P1 busy, reset red led (same led, reset>red, set>green )print parking not available in display(0)
         if(P1_LED==0)
         {
         GPIOPinWrite(GPIO_PORTA_BASE, GPIO_PIN_7, 0);
