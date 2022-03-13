@@ -187,3 +187,16 @@ void MPU6050Example(void)
         //delayMS(100);
     }
 }
+
+void uart2_init(void)
+{
+    //Prepare System for Uart2
+    HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
+    HWREG(GPIO_PORTD_BASE + GPIO_O_CR) |= GPIO_PIN_7;
+    //Config UART2 pinout Config BaudRate 115200
+    GPIOPinConfigure(GPIO_PD7_U2TX);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2); // enable uart2
+    GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7); // pines de control del uart
+    UARTConfigSetExpClk(UART2_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
+    UARTIntClear(UART2_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX | UART_INT_FE | UART_INT_PE | UART_INT_BE | UART_INT_OE | UART_INT_RI | UART_INT_CTS | UART_INT_DCD | UART_INT_DSR);
+}

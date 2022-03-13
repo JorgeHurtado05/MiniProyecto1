@@ -20,6 +20,7 @@ void delayMS(int ms);
 void MPU6050Callback(void *pvCallbackData, uint_fast8_t ui8Status);
 void I2CMSimpleIntHandler(void);
 void MPU6050Example(void);
+void uart2_init(void);
 
 /*
  * Variables

@@ -18,7 +18,7 @@
 
 
 /*
- * Include Necessary libraries:
+ * Incluir librarias necesarias:
  */
 
 #include <stdbool.h>
@@ -52,10 +52,15 @@
 #include "RUNMPU.h"
 
 
+
+
 int main()
 {
+    //clockFreq = SysCtlClockFreqSet(SYSCTL_OSC_INT | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 16000000);
     SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_PLL | SYSCTL_OSC_INT | SYSCTL_XTAL_16MHZ);
     InitI2C0();
+    ConfigureUART();
     MPU6050Example();
+    uart2_init();
     return(0);
 }
