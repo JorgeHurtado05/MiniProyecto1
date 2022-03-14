@@ -26,7 +26,7 @@ void uart2_init(void);
  * Variables
  */
 float fAccel[3], fGyro[3];
-tMPU6050 sMPU6050;
+//tMPU6050 sMPU6050;
 float x, y, z;
 
 //
@@ -37,6 +37,6 @@ volatile bool g_bMPU6050Done;
 //
 // I2C master instance
 //
-tI2CMInstance g_sI2CMSimpleInst;
+//tI2CMInstance g_sI2CMSimpleInst;
 
 #endif /* RUNMPU_H_ */

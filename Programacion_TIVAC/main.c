@@ -16,11 +16,6 @@
  * Incluimos las librerias necesarias para el proyecto.
  */
 
-
-/*
- * Incluir librarias necesarias:
- */
-
 #include <stdbool.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -42,6 +37,7 @@
 #include "driverlib/rom.h"
 #include "driverlib/rom_map.h"
 #include "driverlib/debug.h"
+#include "driverlib/fpu.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/i2c.h"
 #include "driverlib/sysctl.h"
@@ -49,18 +45,28 @@
 //#include "uart.h"
 #include "utils/uartstdio.h"
 #include "driverlib/uart.h"
+#include "driverlib/sysctl.h"
+#include "driverlib/timer.h"
+#include "driverlib/ssi.h"
 #include "RUNMPU.h"
+#include "PID.h"
+
+/*
+ * Variables de control PID
+ */
 
 
 
 
-int main()
+int main(void)
 {
-    //clockFreq = SysCtlClockFreqSet(SYSCTL_OSC_INT | SYSCTL_USE_PLL | SYSCTL_CFG_VCO_480, 16000000);
-    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_PLL | SYSCTL_OSC_INT | SYSCTL_XTAL_16MHZ);
+    Kp = 1;
+    Ki = 1;
+    Kd = 1;
+    v0 = 10;
     InitI2C0();
     ConfigureUART();
+    SetupSPITimer0 ();
     MPU6050Example();
-    uart2_init();
-    return(0);
 }
+

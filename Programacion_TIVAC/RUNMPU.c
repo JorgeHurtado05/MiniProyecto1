@@ -41,6 +41,7 @@
 #include "utils/uartstdio.h"
 #include "driverlib/uart.h"
 #include "RUNMPU.h"
+#include "PID.h"
 
 //
 // A boolean that is set when a MPU6050 command has completed.
@@ -76,13 +77,20 @@ void InitI2C0(void)
      I2CMInit(&g_sI2CMSimpleInst, I2C0_BASE, INT_I2C0, 0xff, 0xff, SysCtlClockGet());
 }
 
-void ConfigureUART(void) { // Função retirada do exemplo hello.c
+void ConfigureUART(void) { // Funcion extraida del ejemplo hello.c
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     GPIOPinConfigure(GPIO_PA0_U0RX);
     GPIOPinConfigure(GPIO_PA1_U0TX);
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC);
+    UARTStdioConfig(0, 115200, 16000000);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2);
+    GPIOPinConfigure(GPIO_PD6_U2RX);
+    GPIOPinConfigure(GPIO_PD7_U2TX);
+    GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7);
+    UARTClockSourceSet(UART2_BASE, UART_CLOCK_PIOSC);
     UARTStdioConfig(0, 115200, 16000000);
 }
 
@@ -121,8 +129,8 @@ void I2CMSimpleIntHandler(void)
 void MPU6050Example(void)
 {
     float fAccel[3], fGyro[3];
-    tMPU6050 sMPU6050;
     float x = 0, y = 0, z = 0;
+    tMPU6050 sMPU6050;
     //Limpiamos la bandera para esperar a que termine la transmision de datos via MPU6050callback
     g_bMPU6050Done = false;
     /*
@@ -171,7 +179,6 @@ void MPU6050Example(void)
     }
     while (1)
     {
-
         g_bMPU6050Done = false;
         MPU6050DataRead(&sMPU6050, MPU6050Callback, &sMPU6050);
         while (!g_bMPU6050Done)
@@ -184,9 +191,11 @@ void MPU6050Example(void)
         x = (atan2(fAccel[0], sqrt (fAccel[1] * fAccel[1] + fAccel[2] * fAccel[2]))*180.0)/3.14;
         y = (atan2(fAccel[1], sqrt (fAccel[0] * fAccel[0] + fAccel[2] * fAccel[2]))*180.0)/3.14;
         UARTprintf("Ang. X: %d | Ang. Y: %d | Ang. Z: %d\n", (int)x, (int)y, (int)z);
-        //delayMS(100);
+        v1 = x;
     }
 }
+
+
 
 void uart2_init(void)
 {
