@@ -9,6 +9,8 @@
  * Controlador PID Con salida a DAC SPI
  *
  * Basado en los ejemplos single_ended.c y timers.c de TivaWare
+ * Basado en la libreria MPU6050 extraida de:
+ * https://github.com/mathmagson/mpu6050_tm4c123g
  *
  */
 
@@ -51,9 +53,7 @@
 #include "RUNMPU.h"
 #include "PID.h"
 
-/*
- * Variables de control PID
- */
+
 
 
 
@@ -61,12 +61,15 @@
 int main(void)
 {
     Kp = 1;
-    Ki = 1;
-    Kd = 1;
+    Ki = 0;
+    Kd = 0;
     v0 = 10;
     InitI2C0();
     ConfigureUART();
     SetupSPITimer0 ();
-    MPU6050Example();
+    MPU6050Setup();
+    while(1){
+        MPU_READ_ANGLE ();
+    }
 }
 

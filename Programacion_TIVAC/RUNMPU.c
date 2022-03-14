@@ -53,6 +53,14 @@ volatile bool g_bMPU6050Done;
 //
 tI2CMInstance g_sI2CMSimpleInst;
 
+/*
+ * Variables
+ */
+float fAccel[3], fGyro[3];
+tMPU6050 sMPU6050;
+float x = 0, y = 0, z = 0;
+
+
 //
 //Device frequency
 //
@@ -94,6 +102,7 @@ void ConfigureUART(void) { // Funcion extraida del ejemplo hello.c
     UARTStdioConfig(0, 115200, 16000000);
 }
 
+
 void delayMS(int ms) {
     //ROM_SysCtlDelay( (ROM_SysCtlClockGet()/(3*1000))*ms ) ;  // more accurate
     SysCtlDelay( (SysCtlClockGet()/(3*1000))*ms ) ;  // less accurate
@@ -126,11 +135,9 @@ void I2CMSimpleIntHandler(void)
 //
 // The MPU6050 example.
 //
-void MPU6050Example(void)
+void MPU6050Setup(void)
 {
-    float fAccel[3], fGyro[3];
-    float x = 0, y = 0, z = 0;
-    tMPU6050 sMPU6050;
+    //tMPU6050 sMPU6050;
     //Limpiamos la bandera para esperar a que termine la transmision de datos via MPU6050callback
     g_bMPU6050Done = false;
     /*
@@ -177,23 +184,32 @@ void MPU6050Example(void)
     while (!g_bMPU6050Done)
     {
     }
+    /*
     while (1)
     {
-        g_bMPU6050Done = false;
-        MPU6050DataRead(&sMPU6050, MPU6050Callback, &sMPU6050);
-        while (!g_bMPU6050Done)
-        {
-        }
-        MPU6050DataAccelGetFloat(&sMPU6050, &fAccel[0], &fAccel[1],
-            &fAccel[2]);
-        MPU6050DataGyroGetFloat(&sMPU6050, &fGyro[0], &fGyro[1], &fGyro[2]);
-        z = fGyro[2];
-        x = (atan2(fAccel[0], sqrt (fAccel[1] * fAccel[1] + fAccel[2] * fAccel[2]))*180.0)/3.14;
-        y = (atan2(fAccel[1], sqrt (fAccel[0] * fAccel[0] + fAccel[2] * fAccel[2]))*180.0)/3.14;
-        UARTprintf("Ang. X: %d | Ang. Y: %d | Ang. Z: %d\n", (int)x, (int)y, (int)z);
-        v1 = x;
+        MPU_READ_ANGLE ();
     }
+    */
 }
+
+void MPU_READ_ANGLE (void)
+{
+    //tMPU6050 sMPU6050;
+    g_bMPU6050Done = false;
+    MPU6050DataRead(&sMPU6050, MPU6050Callback, &sMPU6050);
+    while (!g_bMPU6050Done)
+    {
+    }
+    MPU6050DataAccelGetFloat(&sMPU6050, &fAccel[0], &fAccel[1],
+        &fAccel[2]);
+    MPU6050DataGyroGetFloat(&sMPU6050, &fGyro[0], &fGyro[1], &fGyro[2]);
+    z = fGyro[2];
+    x = (atan2(fAccel[0], sqrt (fAccel[1] * fAccel[1] + fAccel[2] * fAccel[2]))*180.0)/3.14;
+    y = (atan2(fAccel[1], sqrt (fAccel[0] * fAccel[0] + fAccel[2] * fAccel[2]))*180.0)/3.14;
+    UARTprintf("Ang. X: %d | Ang. Y: %d | Ang. Z: %d\n", (int)x, (int)y, (int)z);
+    v1 = x;
+}
+
 
 
 

@@ -19,15 +19,10 @@ void ConfigureUART(void);
 void delayMS(int ms);
 void MPU6050Callback(void *pvCallbackData, uint_fast8_t ui8Status);
 void I2CMSimpleIntHandler(void);
-void MPU6050Example(void);
+void MPU6050Setup(void);
 void uart2_init(void);
+void MPU_READ_ANGLE (void);
 
-/*
- * Variables
- */
-float fAccel[3], fGyro[3];
-//tMPU6050 sMPU6050;
-float x, y, z;
 
 //
 // A boolean that is set when a MPU6050 command has completed.
