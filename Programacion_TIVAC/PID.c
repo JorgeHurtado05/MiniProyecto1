@@ -34,6 +34,15 @@
 #include "RUNMPU.h"
 #include "PID.h"
 
+/*
+ * Declaracion de Variables de Ingreso de datos
+ */
+
+static float v0, v1;
+static float Kp;
+static float Ki;
+static float Kd;
+
 
 /*
  * Declaracion de Variables para PID
@@ -125,7 +134,31 @@ void Timer0IntHandler(void)
        dato = dato + uk_int;
 }
 
+/*
+ * Set Functions
+ */
 
+void Set_Var_V0(float val)
+{
+    v0=val ;
+}
 
+void Set_Var_V1(float val)
+{
+    v1=val ;
+}
 
+void Set_Var_Kp(float val)
+{
+    Kp=val ;
+}
 
+void Set_Var_Kd(float val)
+{
+    Kd=val ;
+}
+
+void Set_Var_Ki(float val)
+{
+    Ki=val ;
+}

@@ -22,8 +22,16 @@ void I2CMSimpleIntHandler(void);
 void MPU6050Setup(void);
 void uart2_init(void);
 void MPU_READ_ANGLE (void);
+/*
+ * Get Functions
+ */
 
-
+float get_Var_x(void);
+float get_Var_y(void);
+float get_Var_z(void);
+float get_Var_fAccelx(void);
+float get_Var_fAccely(void);
+float get_Var_fAccelz(void);
 //
 // A boolean that is set when a MPU6050 command has completed.
 //

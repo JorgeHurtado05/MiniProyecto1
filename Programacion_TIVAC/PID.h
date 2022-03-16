@@ -18,13 +18,13 @@ void Timer0IntHandler(void);
 void SetupSPITimer0 (void);
 
 /*
- * Variables
+ * Declaracion Set Functions
  */
-
-volatile float v0, v1;
-float Kp;
-float Ki;
-float Kd;
+void Set_Var_V0(float val);
+void Set_Var_V1(float val);
+void Set_Var_Kp(float val);
+void Set_Var_Kd(float val);
+void Set_Var_Ki(float val);
 
 
 #endif /* PID_H_ */

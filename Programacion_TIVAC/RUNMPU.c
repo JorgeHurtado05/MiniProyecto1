@@ -56,9 +56,9 @@ tI2CMInstance g_sI2CMSimpleInst;
 /*
  * Variables
  */
-float fAccel[3], fGyro[3];
+static float fAccel[3], fGyro[3];
 tMPU6050 sMPU6050;
-float x = 0, y = 0, z = 0;
+static float x = 0, y = 0, z = 0;
 
 
 //
@@ -207,8 +207,8 @@ void MPU_READ_ANGLE (void)
     x = (atan2(fAccel[0], sqrt (fAccel[1] * fAccel[1] + fAccel[2] * fAccel[2]))*180.0)/3.14;
     y = (atan2(fAccel[1], sqrt (fAccel[0] * fAccel[0] + fAccel[2] * fAccel[2]))*180.0)/3.14;
     UARTprintf("Ang. X: %d | Ang. Y: %d | Ang. Z: %d\n", (int)x, (int)y, (int)z);
-    v1 = x;
 }
+
 
 
 
@@ -224,4 +224,38 @@ void uart2_init(void)
     GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7); // pines de control del uart
     UARTConfigSetExpClk(UART2_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
     UARTIntClear(UART2_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX | UART_INT_FE | UART_INT_PE | UART_INT_BE | UART_INT_OE | UART_INT_RI | UART_INT_CTS | UART_INT_DCD | UART_INT_DSR);
+}
+
+/*
+ * Get Function
+ */
+
+float get_Var_x(void)
+{
+return x;
+}
+
+float get_Var_y(void)
+{
+return y;
+}
+
+float get_Var_z(void)
+{
+return z;
+}
+
+float get_Var_fAccelx(void)
+{
+return fAccel[0];
+}
+
+float get_Var_fAccely(void)
+{
+return fAccel[1];
+}
+
+float get_Var_fAccelz(void)
+{
+return fAccel[2];
 }

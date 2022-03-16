@@ -54,22 +54,33 @@
 #include "PID.h"
 
 
+/*
+ * Variables para Coneccion de PID con MPU6050
+ */
 
+float Angulox,Kp,Ki,Kd,v1;
 
 
 
 int main(void)
 {
-    Kp = 1;
-    Ki = 0;
-    Kd = 0;
-    v0 = 10;
+    Kp=1;
+    Ki=0;
+    Kd=0;
+    v1=12;
     InitI2C0();
     ConfigureUART();
     SetupSPITimer0 ();
     MPU6050Setup();
+    Set_Var_Kp(Kp);
+    Set_Var_Ki(Ki);
+    Set_Var_Kd(Kd);
+    Set_Var_V1(v1);
     while(1){
         MPU_READ_ANGLE ();
+        //Set V0 (angulox)
+        Angulox=get_Var_x();
+        Set_Var_V0(Angulox);
     }
 }
 
