@@ -58,16 +58,16 @@
  * Variables para Coneccion de PID con MPU6050
  */
 
-float Angulox,Kp,Ki,Kd,v1;
+float Anguloy,Kp,Ki,Kd,v1;
 
 
 
 int main(void)
 {
-    Kp=1;
+    Kp=2;
     Ki=0;
     Kd=0;
-    v1=12;
+    v1=0;
     InitI2C0();
     ConfigureUART();
     SetupSPITimer0 ();
@@ -79,8 +79,9 @@ int main(void)
     while(1){
         MPU_READ_ANGLE ();
         //Set V0 (angulox)
-        Angulox=get_Var_x();
-        Set_Var_V0(Angulox);
+        Anguloy=get_Var_y();
+        Set_Var_V0(Anguloy);
+        delayMS(500);
     }
 }
 

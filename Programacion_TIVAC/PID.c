@@ -107,7 +107,13 @@ void Timer0IntHandler(void)
     while(SSIBusy(SSI0_BASE))
     {
     }
+    PID_RESTADOR ();
 
+}
+
+
+void PID_RESTADOR (void)
+{
 /*
  * PID RESTADOR
  */
@@ -128,11 +134,15 @@ void Timer0IntHandler(void)
            uk = -10;
        }
 // Mapeo para salida por SPI para el DAC
-       uk2 = uk*4095.0/3.3;
+       uk2 = (uk+10)*4095.0/20;
        uk_int = (int)uk2;
        dato = 0b0111000000000000;
        dato = dato + uk_int;
 }
+
+
+
+
 
 /*
  * Set Functions
