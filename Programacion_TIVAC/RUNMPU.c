@@ -43,6 +43,7 @@
 #include "RUNMPU.h"
 #include "PID.h"
 
+
 //
 // A boolean that is set when a MPU6050 command has completed.
 //
@@ -59,7 +60,7 @@ tI2CMInstance g_sI2CMSimpleInst;
 static float fAccel[3], fGyro[3];
 tMPU6050 sMPU6050;
 static float x = 0, y = 0, z = 0;
-static uint8_t  Valy_uart=0;
+uint8_t  Valy_uart=0;
 
 
 //
@@ -210,36 +211,90 @@ void MPU_READ_ANGLE (void)
     z = fGyro[2];
     x = (atan2(fAccel[0], sqrt (fAccel[1] * fAccel[1] + fAccel[2] * fAccel[2]))*180.0)/3.14;
     y = (atan2(fAccel[1], sqrt (fAccel[0] * fAccel[0] + fAccel[2] * fAccel[2]))*180.0)/3.14;
-    UARTprintf("Ang. X: %d | Ang. Y: %d | Ang. Z: %d\n", (int)x, (int)y, (int)z);
+    //UARTprintf("Ang. X: %d | Ang. Y: %d | Ang. Z: %d\n", (int)x, (int)y, (int)z);
     //Valy_uart=(int)y;
-    //Valy_uart=1;
+    Valy_uart=1;
+    //UARTCharPut(UART2_BASE, Valy_uart);
+    //UARTSend((uint8_t *)pui8Buffer, uint32_t ui32Count)
+    UARTSend(x, 8);
     //UARTCharPut(UART2_BASE, Valy_uart);
 }
 
 
 
+/*
+ * UART CODE
+ */
 
+void
+UARTIntHandler(void)
+{
+    uint32_t ui32Status;
 
+    //
+    // Get the interrrupt status.
+    //
+    ui32Status = ROM_UARTIntStatus(UART2_BASE, true);
+
+    //
+    // Clear the asserted interrupts.
+    //
+    ROM_UARTIntClear(UART2_BASE, ui32Status);
+
+    //
+    // Loop while there are characters in the receive FIFO.
+    //
+    while(ROM_UARTCharsAvail(UART2_BASE))
+    {
+        //
+        // Read the next character from the UART and write it back to the UART.
+        //
+        ROM_UARTCharPutNonBlocking(UART2_BASE,
+                                   ROM_UARTCharGetNonBlocking(UART2_BASE));
+    }
+}
+
+void
+UARTSend(const uint8_t *pui8Buffer, uint32_t ui32Count)
+{
+    //
+    // Loop while there are more characters to send.
+    //
+    while(ui32Count--)
+    {
+        //
+        // Write the next character to the UART.
+        //
+        ROM_UARTCharPutNonBlocking(UART2_BASE, *pui8Buffer++);
+    }
+}
 void uart2_init(void)
 {
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
-    GPIOPinConfigure(GPIO_PA0_U0RX);
-    GPIOPinConfigure(GPIO_PA1_U0TX);
-    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
-    UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC);
-    UARTStdioConfig(0, 115200, 16000000);
     //Prepare System for Uart2
     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
     HWREG(GPIO_PORTD_BASE + GPIO_O_CR) |= GPIO_PIN_7;
     //Config UART2 pinout Config BaudRate 115200
-    GPIOPinConfigure(GPIO_PD6_U2RX);
     GPIOPinConfigure(GPIO_PD7_U2TX);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2); // enable uart2
     GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7); // pines de control del uart
     UARTConfigSetExpClk(UART2_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
     UARTIntClear(UART2_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX | UART_INT_FE | UART_INT_PE | UART_INT_BE | UART_INT_OE | UART_INT_RI | UART_INT_CTS | UART_INT_DCD | UART_INT_DSR);
+
+    /*
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
+    ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2);
+    ROM_IntMasterEnable();
+    ROM_GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7);
+    ROM_UARTConfigSetExpClk(UART2_BASE, ROM_SysCtlClockGet(), 115200,
+                                (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE |
+                                 UART_CONFIG_PAR_NONE));
+    ROM_IntEnable(INT_UART0);
+    ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
+    */
 }
+
+
+
 
 /*
  * Get Function

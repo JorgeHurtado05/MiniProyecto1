@@ -73,7 +73,7 @@ int main(void)
     SetupSPITimer0 ();
     InitI2C0();
     ConfigureUART();
-    //uart2_init();
+    uart2_init();
 
     MPU6050Setup();
     Set_Var_Kp(Kp);

@@ -36,6 +36,14 @@
  
 #define VPIN_BUTTON_1    V1 
 #define VPIN_BUTTON_2    V2
+#define VPIN_BUTTON_3    V3
+
+/*
+ * Declaracion de Variables
+ */
+
+String inputString = "";         // a String to hold incoming data
+bool stringComplete = false;  // whether the string is complete
 
 /*
  * Actualizamos los valores de la nube desde blynk
@@ -47,11 +55,8 @@ BLYNK_CONNECTED() {
   // Request the latest state from the server
   Blynk.syncVirtual(VPIN_BUTTON_1);
   Blynk.syncVirtual(VPIN_BUTTON_2);
+  Blynk.syncVirtual(VPIN_BUTTON_3);
 }
-
-
-String inputString = "";         // a String to hold incoming data
-bool stringComplete = false;  // whether the string is complete
 
 void setup() {
   // put your setup code here, to run once:
@@ -68,12 +73,29 @@ void setup() {
 
 void loop() {
   
-  BlynkEdgent.run(); 
-  if (Serial.available()>0)
-  {
-    inputString=Serial.read();
-    Serial.println(inputString);
+  BlynkEdgent.run();
+  Blynk.virtualWrite(V3,5);
+
+  // print the string when a newline arrives:
+  if (stringComplete) {
     Blynk.virtualWrite(V2,inputString);
+    // clear the string:
+    inputString = "";
+    stringComplete = false;
   }
 
+}
+
+void serialEvent() {
+  while (Serial.available()) {
+    // get the new byte:
+    char inChar = (char)Serial.read();
+    // add it to the inputString:
+    inputString += inChar;
+    // if the incoming character is a newline, set a flag so the main loop can
+    // do something about it:
+    if (inChar == '\n') {
+      stringComplete = true;
+    }
+  }
 }
