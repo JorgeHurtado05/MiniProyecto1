@@ -18,6 +18,7 @@ void Timer0IntHandler(void);
 void SetupSPITimer0 (void);
 void PID_RESTADOR (void);
 
+
 /*
  * Declaracion Set Functions
  */
@@ -27,5 +28,9 @@ void Set_Var_Kp(float val);
 void Set_Var_Kd(float val);
 void Set_Var_Ki(float val);
 
+/*
+ * Declaracion Get Functions
+ */
+int get_Var_timerReady(void);
 
 #endif /* PID_H_ */

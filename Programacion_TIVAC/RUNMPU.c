@@ -59,6 +59,7 @@ tI2CMInstance g_sI2CMSimpleInst;
 static float fAccel[3], fGyro[3];
 tMPU6050 sMPU6050;
 static float x = 0, y = 0, z = 0;
+static uint8_t  Valy_uart=0;
 
 
 //
@@ -86,6 +87,7 @@ void InitI2C0(void)
 }
 
 void ConfigureUART(void) { // Funcion extraida del ejemplo hello.c
+
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     GPIOPinConfigure(GPIO_PA0_U0RX);
@@ -93,13 +95,14 @@ void ConfigureUART(void) { // Funcion extraida del ejemplo hello.c
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC);
     UARTStdioConfig(0, 115200, 16000000);
+    /*
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2);
     GPIOPinConfigure(GPIO_PD6_U2RX);
     GPIOPinConfigure(GPIO_PD7_U2TX);
     GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7);
     UARTClockSourceSet(UART2_BASE, UART_CLOCK_PIOSC);
-    UARTStdioConfig(0, 115200, 16000000);
+    UARTStdioConfig(2, 115200, 16000000);*/
 }
 
 
@@ -194,6 +197,7 @@ void MPU6050Setup(void)
 
 void MPU_READ_ANGLE (void)
 {
+
     //tMPU6050 sMPU6050;
     g_bMPU6050Done = false;
     MPU6050DataRead(&sMPU6050, MPU6050Callback, &sMPU6050);
@@ -207,6 +211,9 @@ void MPU_READ_ANGLE (void)
     x = (atan2(fAccel[0], sqrt (fAccel[1] * fAccel[1] + fAccel[2] * fAccel[2]))*180.0)/3.14;
     y = (atan2(fAccel[1], sqrt (fAccel[0] * fAccel[0] + fAccel[2] * fAccel[2]))*180.0)/3.14;
     UARTprintf("Ang. X: %d | Ang. Y: %d | Ang. Z: %d\n", (int)x, (int)y, (int)z);
+    //Valy_uart=(int)y;
+    //Valy_uart=1;
+    //UARTCharPut(UART2_BASE, Valy_uart);
 }
 
 
@@ -215,10 +222,18 @@ void MPU_READ_ANGLE (void)
 
 void uart2_init(void)
 {
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
+    GPIOPinConfigure(GPIO_PA0_U0RX);
+    GPIOPinConfigure(GPIO_PA1_U0TX);
+    GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
+    UARTClockSourceSet(UART0_BASE, UART_CLOCK_PIOSC);
+    UARTStdioConfig(0, 115200, 16000000);
     //Prepare System for Uart2
     HWREG(GPIO_PORTD_BASE + GPIO_O_LOCK) = GPIO_LOCK_KEY;
     HWREG(GPIO_PORTD_BASE + GPIO_O_CR) |= GPIO_PIN_7;
     //Config UART2 pinout Config BaudRate 115200
+    GPIOPinConfigure(GPIO_PD6_U2RX);
     GPIOPinConfigure(GPIO_PD7_U2TX);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2); // enable uart2
     GPIOPinTypeUART(GPIO_PORTD_BASE, GPIO_PIN_6 | GPIO_PIN_7); // pines de control del uart

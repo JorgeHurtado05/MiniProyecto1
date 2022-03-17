@@ -42,6 +42,7 @@ static float v0, v1;
 static float Kp;
 static float Ki;
 static float Kd;
+static int timerReady=0;
 
 
 /*
@@ -96,6 +97,7 @@ void SetupSPITimer0 (void)
 
 void Timer0IntHandler(void)
 {
+    timerReady=0;
     uint32_t pui32DataTx[NUM_SPI_DATA]; // la función put pide tipo uint32_t
     uint8_t ui32Index;
     TimerIntClear(TIMER0_BASE, TIMER_TIMA_TIMEOUT);
@@ -108,7 +110,6 @@ void Timer0IntHandler(void)
     {
     }
     PID_RESTADOR ();
-
 }
 
 
@@ -133,7 +134,7 @@ void PID_RESTADOR (void)
        if (uk < -10){
            uk = -10;
        }
-// Mapeo para salida por SPI para el DAC
+// Mapeo para salida por SPI para el DAC rango -26 a 26 grados permisibles
        uk2 = (uk+10)*4095.0/20;
        uk_int = (int)uk2;
        dato = 0b0111000000000000;
@@ -172,3 +173,14 @@ void Set_Var_Ki(float val)
 {
     Ki=val ;
 }
+
+
+/*
+ * Get Function
+ */
+
+int get_Var_timerReady(void)
+{
+return timerReady;
+}
+

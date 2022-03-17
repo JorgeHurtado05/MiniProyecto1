@@ -34,7 +34,8 @@
  * Definimos los Pines Virtuales (Blynk)
  */
  
-#define VPIN_BUTTON_1    V1
+#define VPIN_BUTTON_1    V1 
+#define VPIN_BUTTON_2    V2
 
 /*
  * Actualizamos los valores de la nube desde blynk
@@ -45,12 +46,19 @@
 BLYNK_CONNECTED() {
   // Request the latest state from the server
   Blynk.syncVirtual(VPIN_BUTTON_1);
+  Blynk.syncVirtual(VPIN_BUTTON_2);
 }
 
+
+String inputString = "";         // a String to hold incoming data
+bool stringComplete = false;  // whether the string is complete
 
 void setup() {
   // put your setup code here, to run once:
   Serial.begin(115200);
+    // reserve 200 bytes for the inputString:
+  inputString.reserve(200);
+  
   delay(100);
   BlynkEdgent.begin();
   pinMode(wifiLed, OUTPUT);
@@ -61,4 +69,11 @@ void setup() {
 void loop() {
   
   BlynkEdgent.run(); 
+  if (Serial.available()>0)
+  {
+    inputString=Serial.read();
+    Serial.println(inputString);
+    Blynk.virtualWrite(V2,inputString);
+  }
+
 }
