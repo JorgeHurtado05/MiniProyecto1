@@ -43,6 +43,7 @@ static float Kp;
 static float Ki;
 static float Kd;
 static int timerReady=0;
+float Anguloy;
 
 
 /*
@@ -74,6 +75,11 @@ void SetupSPITimer0 (void)
     // Configuración de SPI
     SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
+    //Configuramos Boton para desbalance
+    SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOF);
+    GPIOPinTypeGPIOInput(GPIO_PORTF_BASE, GPIO_PIN_4);
+    GPIOPadConfigSet(GPIO_PORTF_BASE, GPIO_PIN_4, GPIO_STRENGTH_2MA, GPIO_PIN_TYPE_STD_WPU);
+    //Configuramos Parametros SPI
     GPIOPinConfigure(GPIO_PA2_SSI0CLK);
     GPIOPinConfigure(GPIO_PA3_SSI0FSS);
     GPIOPinConfigure(GPIO_PA4_SSI0RX);
@@ -115,6 +121,7 @@ void Timer0IntHandler(void)
 
 void PID_RESTADOR (void)
 {
+    //MPU_READ_ANGLE ();
 /*
  * PID RESTADOR
  */
@@ -141,7 +148,17 @@ void PID_RESTADOR (void)
     dato = dato + uk_int;
 }
 
-
+void Desbalance (void)
+{
+    uint8_t Boton;
+    Boton=GPIOPinRead(GPIO_PORTF_BASE, GPIO_PIN_4);
+    if(Boton==0)
+    {
+        //Anguloy=get_Var_y();
+        Anguloy=20;
+        Set_Var_V1(Anguloy);
+    }
+}
 
 
 

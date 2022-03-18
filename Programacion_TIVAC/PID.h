@@ -17,7 +17,7 @@
 void Timer0IntHandler(void);
 void SetupSPITimer0 (void);
 void PID_RESTADOR (void);
-
+void Desbalance (void);
 
 /*
  * Declaracion Set Functions

@@ -85,6 +85,7 @@ int main(void)
         MPU_READ_ANGLE ();
         //Set V0 (angulox)
         Anguloy=get_Var_y();
+        Desbalance ();
         Set_Var_V0(Anguloy);
         delayMS(1000);
     }
