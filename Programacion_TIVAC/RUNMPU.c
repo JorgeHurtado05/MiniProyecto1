@@ -60,7 +60,7 @@ tI2CMInstance g_sI2CMSimpleInst;
 static float fAccel[3], fGyro[3];
 tMPU6050 sMPU6050;
 static float x = 0, y = 0, z = 0;
-uint8_t  Valy_uart=0;
+static uint8_t  Valy_uart=0;
 
 
 //
@@ -211,21 +211,22 @@ void MPU_READ_ANGLE (void)
     z = fGyro[2];
     x = (atan2(fAccel[0], sqrt (fAccel[1] * fAccel[1] + fAccel[2] * fAccel[2]))*180.0)/3.14;
     y = (atan2(fAccel[1], sqrt (fAccel[0] * fAccel[0] + fAccel[2] * fAccel[2]))*180.0)/3.14;
-    //UARTprintf("Ang. X: %d | Ang. Y: %d | Ang. Z: %d\n", (int)x, (int)y, (int)z);
+    UARTprintf("Ang. X: %d | Ang. Y: %d | Ang. Z: %d\n", (int)x, (int)y, (int)z);
     //Valy_uart=(int)y;
-    Valy_uart=1;
+    //Valy_uart=1;
     //UARTCharPut(UART2_BASE, Valy_uart);
     //UARTSend((uint8_t *)pui8Buffer, uint32_t ui32Count)
-    UARTSend(x, 8);
+    //UARTSend(x, 8);
     //UARTCharPut(UART2_BASE, Valy_uart);
 }
-
 
 
 /*
  * UART CODE
  */
 
+
+/*
 void
 UARTIntHandler(void)
 {
@@ -280,7 +281,7 @@ void uart2_init(void)
     UARTConfigSetExpClk(UART2_BASE, SysCtlClockGet(), 115200, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
     UARTIntClear(UART2_BASE, UART_INT_RX | UART_INT_RT | UART_INT_TX | UART_INT_FE | UART_INT_PE | UART_INT_BE | UART_INT_OE | UART_INT_RI | UART_INT_CTS | UART_INT_DCD | UART_INT_DSR);
 
-    /*
+    //huhu
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOD);
     ROM_SysCtlPeripheralEnable(SYSCTL_PERIPH_UART2);
     ROM_IntMasterEnable();
@@ -290,10 +291,10 @@ void uart2_init(void)
                                  UART_CONFIG_PAR_NONE));
     ROM_IntEnable(INT_UART0);
     ROM_UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
-    */
+    //huhu
 }
 
-
+*/
 
 
 /*

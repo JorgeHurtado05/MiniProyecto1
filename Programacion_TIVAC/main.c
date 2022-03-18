@@ -59,27 +59,27 @@
  */
 
 float Anguloy,Kp,Ki,Kd,v1;
-int timerReady;
 
 
 
 int main(void)
 {
     //SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_PLL | SYSCTL_OSC_INT | SYSCTL_XTAL_16MHZ);
-    Kp=2;
+    Kp=10;
     Ki=0;
     Kd=0;
     v1=0;
     SetupSPITimer0 ();
     InitI2C0();
     ConfigureUART();
-    uart2_init();
+    //uart2_init();
 
     MPU6050Setup();
     Set_Var_Kp(Kp);
     Set_Var_Ki(Ki);
     Set_Var_Kd(Kd);
     Set_Var_V1(v1);
+
     while (1)
     {
         MPU_READ_ANGLE ();

@@ -79,6 +79,7 @@ void loop() {
   // print the string when a newline arrives:
   if (stringComplete) {
     Blynk.virtualWrite(V2,inputString);
+    //Serial.println(inputString.to);
     // clear the string:
     inputString = "";
     stringComplete = false;
