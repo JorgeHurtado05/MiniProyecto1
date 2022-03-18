@@ -73,7 +73,7 @@ int main(void)
     InitI2C0();
     ConfigureUART();
     //uart2_init();
-
+//k;
     MPU6050Setup();
     Set_Var_Kp(Kp);
     Set_Var_Ki(Ki);
