@@ -37,9 +37,5 @@ float get_Var_fAccelz(void);
 //
 volatile bool g_bMPU6050Done;
 
-//
-// I2C master instance
-//
-//tI2CMInstance g_sI2CMSimpleInst;
 
 #endif /* RUNMPU_H_ */

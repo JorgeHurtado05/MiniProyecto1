@@ -85,6 +85,8 @@ void InitI2C0(void)
      HWREG(I2C0_BASE + I2C_O_FIFOCTL) = 80008000;
      //Initialize I2C Protocol.
      I2CMInit(&g_sI2CMSimpleInst, I2C0_BASE, INT_I2C0, 0xff, 0xff, SysCtlClockGet());
+     //I2CMInit(&g_sI2CMSimpleInst, I2C0_BASE, INT_I2C0, 0xff, 0xff, 16000000);
+
 }
 
 void ConfigureUART(void) { // Funcion extraida del ejemplo hello.c

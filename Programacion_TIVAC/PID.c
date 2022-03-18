@@ -69,8 +69,8 @@ uint16_t dato = 0b0111000000000000;       // Para lo que se envía por SPI.
 void SetupSPITimer0 (void)
 {
     uint32_t pui32residual[NUM_SPI_DATA];
-    uint16_t freq_muestreo = 1000;    // En Hz
-    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_PLL | SYSCTL_OSC_INT | SYSCTL_XTAL_16MHZ); // 80 MHz
+    uint16_t freq_muestreo = 100;    // En Hz
+    //SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_PLL | SYSCTL_OSC_INT | SYSCTL_XTAL_16MHZ); // 80 MHz
     // Configuración de SPI
     SysCtlPeripheralEnable(SYSCTL_PERIPH_SSI0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
@@ -118,27 +118,27 @@ void PID_RESTADOR (void)
 /*
  * PID RESTADOR
  */
-       ek = v0 - v1;
-       ed = ek - ek_1;
-       Ek = Ek_1 + ek;
-       // Sumatoria de PID
-       uk = Kp*ek + Ki*Ek*delta + (Kd*ed)/delta;
-       ek_1 = ek;
-       Ek_1 = Ek;
+    ek = v0 - v1;
+    ed = ek - ek_1;
+    Ek = Ek_1 + ek;
+    // Sumatoria de PID
+    uk = Kp*ek + Ki*Ek*delta + (Kd*ed)/delta;
+    ek_1 = ek;
+    Ek_1 = Ek;
 /*
  * MAPEO PID (LIMITE DE RANGO)
  */
-       if (uk > 10){
-           uk = 10;
-       }
-       if (uk < -10){
-           uk = -10;
-       }
+    if (uk > 10){
+        uk = 10;
+    }
+    if (uk < -10){
+        uk = -10;
+    }
 // Mapeo para salida por SPI para el DAC rango -26 a 26 grados permisibles
-       uk2 = (uk+10)*4095.0/20;
-       uk_int = (int)uk2;
-       dato = 0b0111000000000000;
-       dato = dato + uk_int;
+    uk2 = (uk+10)*4095.0/20;
+    uk_int = (int)uk2;
+    dato = 0b0111000000000000;
+    dato = dato + uk_int;
 }
 
 
