@@ -64,6 +64,7 @@ float Anguloy,Kp,Ki,Kd,v1;
 
 int main(void)
 {
+
     SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_PLL | SYSCTL_OSC_INT | SYSCTL_XTAL_16MHZ);   //80MhZ
     Kp=0.8;
     Ki=0.1;
@@ -87,7 +88,7 @@ int main(void)
         Anguloy=get_Var_y();
         Desbalance ();
         Set_Var_V0(Anguloy);
-        delayMS(1000);
+        delayMS(1);
     }
 }
 
